@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed | Sheebmart{% endblock %}
+{% block content %}
+<section class="success-section">
+    <div class="success-card">
+        <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+        <span class="eyebrow">ORDER CONFIRMED</span>
+        <h1>Thank you for shopping with us!</h1>
+        <p>Your order <strong>#{{ order.id }}</strong> has been placed successfully.</p>
+        <div class="success-details">
+            <div><span>Total</span><strong>₹{{ order.total|floatformat:0 }}</strong></div>
+            <div><span>Payment</span><strong>{{ order.get_payment_method_display }}</strong></div>
+            <div><span>Status</span><strong>{{ order.get_status_display }}</strong></div>
+        </div>
+        <div class="d-flex gap-2 justify-content-center flex-wrap mt-4">
+            <a href="{% url 'orders:my_orders' %}" class="btn btn-dark">View My Orders</a>
+            <a href="{% url 'products:collection' %}" class="btn btn-outline-dark">Continue Shopping</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

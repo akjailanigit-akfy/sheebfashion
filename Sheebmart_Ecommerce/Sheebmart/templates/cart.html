@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Your Cart | Sheebmart{% endblock %}
+{% block content %}
+<section class="page-hero compact">
+    <div class="container"><span class="eyebrow">YOUR SHOPPING BAG</span><h1>Ready when you are.</h1></div>
+</section>
+<section class="container py-5">
+    {% if items %}
+    <div class="row g-5">
+        <div class="col-lg-8">
+            {% for item in items %}
+            <div class="cart-item">
+                <div class="cart-thumb">
+                    {% if item.product.image_url %}<img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">{% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    <div class="product-meta">{{ item.product.category.name }}</div>
+                    <h5>{{ item.product.name }}</h5>
+                    <div class="price-row"><strong>₹{{ item.product.discounted_price|floatformat:0 }}</strong></div>
+                    <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-3">
+                        <form method="post" action="{% url 'cart:update' item.product.id %}" class="qty-control">
+                            {% csrf_token %}
+                            <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}">−</button>
+                            <span>{{ item.quantity }}</span>
+                            <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}">+</button>
+                        </form>
+                        <form method="post" action="{% url 'cart:remove' item.product.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="0">
+                            <button class="btn btn-link text-danger p-0"><i class="fa-regular fa-trash-can me-1"></i> Remove</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="text-end"><strong>₹{{ item.line_total|floatformat:0 }}</strong></div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-lg-4">
+            <div class="summary-card">
+                <h4>Order summary</h4>
+                <div class="summary-line"><span>Subtotal</span><strong>₹{{ subtotal|floatformat:0 }}</strong></div>
+                <div class="summary-line"><span>Discount</span><strong class="text-success">− ₹{{ discount|floatformat:0 }}</strong></div>
+                <div class="summary-line"><span>Delivery</span><strong>{% if delivery %}₹{{ delivery|floatformat:0 }}{% else %}FREE{% endif %}</strong></div>
+                <hr>
+                <div class="summary-line total"><span>Total</span><strong>₹{{ total|floatformat:0 }}</strong></div>
+                <a href="{% url 'cart:checkout' %}" class="btn btn-dark w-100 btn-lg mt-3">Proceed to Checkout</a>
+                <p class="small text-muted text-center mt-3 mb-0">Free delivery on orders above ₹999.</p>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything yet.</p>
+        <a href="{% url 'products:collection' %}" class="btn btn-dark">Continue Shopping</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

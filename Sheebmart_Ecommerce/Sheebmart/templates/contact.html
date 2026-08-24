@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Contact Us | Sheebmart{% endblock %}
+{% block content %}
+<section class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-5"><span class="eyebrow">GET IN TOUCH</span><h1>How can we help?</h1><p class="text-muted">Have a question about an order, product or partnership? Send us a message.</p><div class="contact-points mt-4"><div><i class="fa-solid fa-envelope"></i><span>support@sheebmart.example</span></div><div><i class="fa-solid fa-clock"></i><span>Mon–Sat · 9:00 AM–6:00 PM</span></div></div></div>
+        <div class="col-lg-7"><div class="form-card"><form method="post">{% csrf_token %}<div class="mb-3"><label>Name</label><input class="form-control" required name="name"></div><div class="mb-3"><label>Email</label><input class="form-control" type="email" required name="email"></div><div class="mb-3"><label>Message</label><textarea class="form-control" name="message" rows="6" required></textarea></div><button class="btn btn-dark btn-lg">Send Message</button></form></div></div>
+    </div>
+</section>
+{% endblock %}

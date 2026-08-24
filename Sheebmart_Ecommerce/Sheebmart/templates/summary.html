@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Order Summary | Sheebmart{% endblock %}
+{% block content %}
+<section class="container py-5">
+    <div class="checkout-steps"><span class="done">1. Address</span><span class="active">2. Summary</span><span>3. Complete</span></div>
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <div class="form-card">
+                <span class="eyebrow">CHECKOUT</span>
+                <h1>Review your order</h1>
+                <div class="address-box mt-4">
+                    <div class="d-flex justify-content-between"><strong>Delivery address</strong><a href="{% url 'orders:address' %}">Edit</a></div>
+                    <p class="mb-0 mt-2">{{ address.full_name }}<br>{{ address.door_number }}, {{ address.street }}<br>{{ address.city }}, {{ address.state }} - {{ address.pincode }}<br>{{ address.mobile }}</p>
+                </div>
+                <div class="mt-4">
+                    {% for item in items %}
+                    <div class="summary-product">
+                        <div class="cart-thumb small-thumb">{% if item.product.image_url %}<img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">{% endif %}</div>
+                        <div class="flex-grow-1"><strong>{{ item.product.name }}</strong><small>Qty: {{ item.quantity }}</small></div>
+                        <strong>₹{{ item.line_total|floatformat:0 }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+                <form method="post" action="{% url 'orders:place' %}" class="mt-4">
+                    {% csrf_token %}
+                    <label class="mb-2">Payment method</label>
+                    <div class="payment-options">
+                        <label><input type="radio" name="payment_method" value="cod" checked> <span><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery</span></label>
+                        <label><input type="radio" name="payment_method" value="online"> <span><i class="fa-solid fa-credit-card"></i> Online Payment <small>Demo placeholder</small></span></label>
+                    </div>
+                    <button class="btn btn-accent btn-lg w-100 mt-4">Place Order · ₹{{ total|floatformat:0 }}</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="summary-card sticky-summary">
+                <h4>Order summary</h4>
+                <div class="summary-line"><span>Subtotal</span><strong>₹{{ subtotal|floatformat:0 }}</strong></div>
+                <div class="summary-line"><span>Delivery</span><strong>{% if delivery %}₹{{ delivery|floatformat:0 }}{% else %}FREE{% endif %}</strong></div>
+                <hr><div class="summary-line total"><span>Total</span><strong>₹{{ total|floatformat:0 }}</strong></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

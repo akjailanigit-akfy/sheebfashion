@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}My Profile | Sheebmart{% endblock %}
+{% block content %}
+<section class="container py-5">
+    <div class="profile-header">
+        <div class="profile-avatar">{{ user.first_name|default:user.username|slice:":1"|upper }}</div>
+        <div><span class="eyebrow">MY ACCOUNT</span><h1>{{ user.get_full_name|default:user.username }}</h1><p>{{ user.email }}</p></div>
+    </div>
+    <div class="row g-4 mt-2">
+        <div class="col-md-4"><a class="account-tile" href="{% url 'orders:my_orders' %}"><i class="fa-solid fa-receipt"></i><strong>My Orders</strong><span>Track your purchases</span></a></div>
+        <div class="col-md-4"><a class="account-tile" href="{% url 'products:wishlist' %}"><i class="fa-regular fa-heart"></i><strong>Wishlist</strong><span>Your saved products</span></a></div>
+        <div class="col-md-4"><a class="account-tile" href="{% url 'accounts:logout' %}"><i class="fa-solid fa-right-from-bracket"></i><strong>Logout</strong><span>Sign out securely</span></a></div>
+    </div>
+</section>
+{% endblock %}

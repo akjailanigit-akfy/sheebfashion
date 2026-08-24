@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My Orders | Sheebmart{% endblock %}
+{% block content %}
+<section class="container py-5">
+    <div class="section-heading"><div><span class="eyebrow">YOUR ACCOUNT</span><h1>My Orders</h1></div><a href="{% url 'products:profile' %}" class="text-link">Profile</a></div>
+    {% for order in orders %}
+    <div class="order-card">
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <div><strong>Order #{{ order.id }}</strong><small>{{ order.created_at|date:"d M Y, h:i A" }}</small></div>
+            <span class="status-pill status-{{ order.status }}">{{ order.get_status_display }}</span>
+        </div>
+        <div class="order-items mt-3">
+            {% for item in order.items.all %}
+            <div><span>{{ item.product_name }} × {{ item.quantity }}</span><strong>₹{{ item.line_total|floatformat:0 }}</strong></div>
+            {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between mt-3 pt-3 border-top"><span>Total</span><strong>₹{{ order.total|floatformat:0 }}</strong></div>
+    </div>
+    {% empty %}
+    <div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-receipt"></i></div><h2>No orders yet</h2><p>Start shopping and your orders will appear here.</p><a href="{% url 'products:collection' %}" class="btn btn-dark">Shop Now</a></div>
+    {% endfor %}
+</section>
+{% endblock %}

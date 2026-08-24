@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Shop | Sheebmart{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">SHEEBMART COLLECTION</span>
+        <h1>Find your next favourite.</h1>
+        <p>Search, filter and discover pieces made for your everyday.</p>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="shop-toolbar">
+        <form class="search-large" method="get">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input name="q" value="{{ query }}" placeholder="Search by product, category, brand...">
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+            <button class="btn btn-dark">Search</button>
+        </form>
+        <form method="get" class="sort-form">
+            {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+            <select name="sort" class="form-select" onchange="this.form.submit()">
+                <option value="">Sort: Recommended</option>
+                <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest</option>
+                <option value="rating" {% if sort == "rating" %}selected{% endif %}>Top Rated</option>
+                <option value="price_low" {% if sort == "price_low" %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_high" {% if sort == "price_high" %}selected{% endif %}>Price: High to Low</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="category-pills my-4">
+        <a class="pill {% if not selected_category %}active{% endif %}" href="{% url 'products:collection' %}">All</a>
+        {% for category in categories %}
+        <a class="pill {% if selected_category == category.slug %}active{% endif %}" href="?category={{ category.slug }}">{{ category.name }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-6 col-md-4 col-lg-3">
+            {% include "partials/product_card.html" with product=product %}
+        </div>
+        {% empty %}
+        <div class="col-12"><div class="empty-box text-center py-5"><i class="fa-solid fa-magnifying-glass mb-3"></i><h4>No products found</h4><p>Try another search or category.</p></div></div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

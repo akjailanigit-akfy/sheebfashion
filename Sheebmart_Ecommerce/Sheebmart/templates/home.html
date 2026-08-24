@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Sheebmart | Fashion & Lifestyle{% endblock %}
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="eyebrow">NEW SEASON · 2026</span>
+                <h1>Style that feels <em>like you.</em></h1>
+                <p class="hero-copy">Discover everyday fashion, accessories and lifestyle essentials curated for your next look.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'products:collection' %}" class="btn btn-dark btn-lg px-4">Shop Now <i class="fa-solid fa-arrow-right ms-2"></i></a>
+                    <a href="{% url 'products:collection' %}?sort=newest" class="btn btn-outline-dark btn-lg px-4">Explore New</a>
+                </div>
+                <div class="hero-stats mt-5">
+                    <div><strong>10K+</strong><span>Happy shoppers</span></div>
+                    <div><strong>500+</strong><span>Curated products</span></div>
+                    <div><strong>4.8/5</strong><span>Average rating</span></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-art"> 
+                    <div class="hero-card card-a">  <span>NEW</span></div>
+                    <div class="hero-card card-b"><span>UP TO 40%</span><strong>Weekend<br>Sale</strong></div>
+                    <div class="hero-circle"></div>
+                    <div class="hero-floating"><i class="fa-solid fa-sparkles"></i> Fresh picks</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="section-heading">
+        <div><span class="eyebrow">SHOP BY MOOD</span><h2>Explore categories</h2></div>
+        <a href="{% url 'products:collection' %}" class="text-link">View all <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="row g-3">
+        {% for category in categories %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <a class="category-tile" href="{% url 'products:collection' %}?category={{ category.slug }}">
+                <span>{{ category.name }}</span><i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12"><p class="text-muted">Add categories from the Django admin.</p></div>
+        {% endfor %}
+    </div>
+</section>
+
+{% include "partials/product_section.html" with section_label="JUST DROPPED" section_title="New Arrivals" products=new_products %}
+{% include "partials/product_section.html" with section_label="TRENDING NOW" section_title="Trending Products" products=trending_products %}
+{% include "partials/product_section.html" with section_label="CUSTOMER FAVOURITES" section_title="Best Sellers" products=best_sellers %}
+{% include "partials/product_section.html" with section_label="LIMITED TIME" section_title="Special Offers" products=offer_products %}
+
+<section class="container py-5">
+    <div class="promo-banner">
+        <div>
+            <span class="eyebrow">SHEEBMART MEMBER PERK</span>
+            <h2>Free delivery on orders above ₹999</h2>
+            <p>More style, less shipping. No code needed.</p>
+        </div>
+        <a href="{% url 'products:collection' %}" class="btn btn-light">Start Shopping</a>
+    </div>
+</section>
+{% endblock %}

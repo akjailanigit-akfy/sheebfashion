@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Delivery Address | Sheebmart{% endblock %}
+{% block content %}
+<section class="container py-5">
+    <div class="checkout-steps"><span class="active">1. Address</span><span>2. Summary</span><span>3. Complete</span></div>
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <div class="form-card">
+                <span class="eyebrow">DELIVERY DETAILS</span>
+                <h1>Where should we deliver?</h1>
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+                    <div class="row g-3">
+                        {% for field in form %}
+                        <div class="{% if field.name == 'full_name' or field.name == 'street' %}col-12{% else %}col-md-6{% endif %}">
+                            <label>{{ field.label }}</label>{{ field }}
+                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="btn btn-dark btn-lg w-100 mt-4">Continue to Summary <i class="fa-solid fa-arrow-right ms-2"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="summary-card sticky-summary">
+                <h4>Order total</h4>
+                <div class="summary-line"><span>Subtotal</span><strong>₹{{ subtotal|floatformat:0 }}</strong></div>
+                <div class="summary-line"><span>Delivery</span><strong>{% if delivery %}₹{{ delivery|floatformat:0 }}{% else %}FREE{% endif %}</strong></div>
+                <hr><div class="summary-line total"><span>Total</span><strong>₹{{ total|floatformat:0 }}</strong></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

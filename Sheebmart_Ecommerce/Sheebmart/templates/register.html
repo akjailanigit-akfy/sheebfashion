@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Create Account | Sheebmart{% endblock %}
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card wide">
+        <div class="text-center mb-4">
+            <div class="brand-mark large mx-auto mb-3">S</div>
+            <h1>Create your account</h1>
+            <p class="text-muted">Join Sheebmart and keep your orders in one place.</p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+            <div class="row g-3">
+                <div class="col-md-6"><label>First name</label>{{ form.first_name }}{{ form.first_name.errors }}</div>
+                <div class="col-md-6"><label>Last name</label>{{ form.last_name }}{{ form.last_name.errors }}</div>
+                <div class="col-md-6"><label>Username</label>{{ form.username }}{{ form.username.errors }}</div>
+                <div class="col-md-6"><label>Email</label>{{ form.email }}{{ form.email.errors }}</div>
+                <div class="col-md-6"><label>Password</label>{{ form.password1 }}{{ form.password1.errors }}</div>
+                <div class="col-md-6"><label>Confirm password</label>{{ form.password2 }}{{ form.password2.errors }}</div>
+            </div>
+            <button class="btn btn-dark w-100 btn-lg mt-4">Create Account</button>
+        </form>
+        <p class="text-center mt-4 mb-0">Already have an account? <a href="{% url 'accounts:login' %}">Login</a></p>
+    </div>
+</section>
+{% endblock %}

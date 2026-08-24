@@ -1,0 +1,15 @@
+<section class="container py-4">
+    <div class="section-heading">
+        <div><span class="eyebrow">{{ section_label }}</span><h2>{{ section_title }}</h2></div>
+        <a href="{% url 'products:collection' %}" class="text-link">View all <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-6 col-md-4 col-lg-3">
+            {% include "partials/product_card.html" with product=product %}
+        </div>
+        {% empty %}
+        <div class="col-12"><div class="empty-box">No products yet. Add demo products using the seed command or Django admin.</div></div>
+        {% endfor %}
+    </div>
+</section>

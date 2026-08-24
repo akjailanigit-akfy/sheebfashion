@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | Sheebmart{% endblock %}
+{% block content %}
+<section class="container py-5">
+    <div class="row g-5 align-items-start">
+        <div class="col-lg-6">
+            <div class="detail-image">
+                {% if product.images.all %}
+                    <img id="mainProductImage" src="{{ product.images.all.0.image_url }}" alt="{{ product.name }}">
+                {% elif product.image_url %}
+                    <img id="mainProductImage" src="{{ product.image_url }}" alt="{{ product.name }}">
+                {% else %}
+                    <div class="image-placeholder"><i class="fa-regular fa-image"></i></div>
+                {% endif %}
+            </div>
+            {% if product.images.all %}
+            <div class="product-thumbs mt-3">
+                {% for image in product.images.all %}
+                <button type="button" class="product-thumb {% if forloop.first %}active{% endif %}" data-image="{{ image.image_url }}">
+                    <img src="{{ image.image_url }}" alt="{{ image.alt_text|default:product.name }}">
+                </button>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-6">
+            <div class="product-meta mb-2">{{ product.category.name }}{% if product.brand %} · {{ product.brand }}{% endif %}</div>
+            <h1 class="detail-title">{{ product.name }}</h1>
+            <div class="rating-row fs-6 mb-3"><span>★</span> {{ average_rating|floatformat:1 }} <small>({{ reviews|length }} reviews)</small></div>
+            <div class="detail-price">
+                <strong>₹{{ product.discounted_price|floatformat:0 }}</strong>
+                {% if product.discount_percent %}<del>₹{{ product.price|floatformat:0 }}</del><span class="save-text">Save ₹{{ product.savings|floatformat:0 }}</span>{% endif %}
+            </div>
+            <p class="detail-description">{{ product.description }}</p>
+
+            {% if size_list %}
+            <div class="option-block">
+                <label>Size</label>
+                <div class="d-flex gap-2 flex-wrap">
+                    {% for size in size_list %}
+                    <button class="option-chip" type="button">{{ size }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if color_list %}
+            <div class="option-block">
+                <label>Color</label>
+                <div class="d-flex gap-2 flex-wrap">
+                    {% for color in color_list %}
+                    <button class="option-chip" type="button">{{ color }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="quantity-row">
+                <label>Quantity</label>
+                <div class="qty-control">
+                    <button type="button" onclick="changeQty(-1)">−</button>
+                    <input id="detailQty" value="1" min="1" max="{{ product.stock }}" readonly>
+                    <button type="button" onclick="changeQty(1)">+</button>
+                </div>
+                <span class="stock-note">{% if product.stock %}{{ product.stock }} in stock{% else %}Out of stock{% endif %}</span>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-dark btn-lg flex-grow-1 add-cart-btn" data-product-id="{{ product.id }}" data-quantity-source="detailQty" {% if not product.stock %}disabled{% endif %}>
+                    Add to Cart
+                </button>
+                <form action="{% url 'products:toggle_wishlist' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-dark btn-lg" title="Wishlist"><i class="fa-regular fa-heart"></i></button>
+                </form>
+            </div>
+            <button type="button" class="btn btn-accent btn-lg w-100 mt-2 buy-now-btn" data-product-id="{{ product.id }}" data-quantity-source="detailQty">Buy Now</button>
+
+            <div class="detail-info mt-4">
+                <div><i class="fa-solid fa-truck"></i><span><strong>Free delivery</strong><small>On orders above ₹999</small></span></div>
+                <div><i class="fa-solid fa-rotate-left"></i><span><strong>Easy returns</strong><small>Simple return experience</small></span></div>
+                <div><i class="fa-solid fa-shield-halved"></i><span><strong>Secure checkout</strong><small>Your data stays protected</small></span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5 pt-4 g-5">
+        <div class="col-lg-7">
+            <h3>Product details</h3>
+            <p class="text-muted">{{ product.description }}</p>
+            {% if product.specifications %}
+            <div class="spec-box">
+                {% for line in product.specifications.splitlines %}
+                <div><span>{{ line }}</span></div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-5">
+            <h3>Customer reviews</h3>
+            {% for review in reviews %}
+            <div class="review-item">
+                <div class="d-flex justify-content-between"><strong>{{ review.user.first_name|default:review.user.username }}</strong><span class="rating-row"><span>★</span> {{ review.rating }}</span></div>
+                <p>{{ review.comment }}</p>
+                <small>{{ review.created_at|date:"d M Y" }}</small>
+            </div>
+            {% empty %}
+            <p class="text-muted">No reviews yet. Be the first to review this product.</p>
+            {% endfor %}
+            {% if user.is_authenticated %}
+            <form method="post" class="review-form mt-4">
+                {% csrf_token %}
+                <h5>Write a review</h5>
+                <select name="rating" class="form-select mb-2">
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - Average</option>
+                    <option value="2">2 - Poor</option>
+                    <option value="1">1 - Bad</option>
+                </select>
+                <textarea name="comment" class="form-control mb-2" rows="4" required placeholder="Share your experience..."></textarea>
+                <button class="btn btn-dark">Submit Review</button>
+            </form>
+            {% else %}
+            <p class="small text-muted">Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> to write a review.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+function changeQty(delta) {
+    const input = document.getElementById('detailQty');
+    let value = parseInt(input.value || '1') + delta;
+    value = Math.max(1, Math.min(parseInt(input.max || '99'), value));
+    input.value = value;
+}
+document.querySelectorAll('.product-thumb').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('mainProductImage').src = btn.dataset.image;
+        document.querySelectorAll('.product-thumb').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+</script>
+{% endblock %}
