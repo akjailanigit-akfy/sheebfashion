@@ -22,6 +22,16 @@
         const quantity = Number(qtySource ? document.getElementById(qtySource)?.value || 1 : 1);
         const url = window.SHEEBMART.addToCartUrlTemplate.replace("__ID__", productId);
 
+        // Retrieve selected options from sessionStorage
+        const optionsData = sessionStorage.getItem(`product_options_${productId}`);
+        const options = optionsData ? JSON.parse(optionsData) : { size: null, color: null };
+        
+        // Create display text for selected options
+        const optionsText = [];
+        if (options.size) optionsText.push(`Size: ${options.size}`);
+        if (options.color) optionsText.push(`Color: ${options.color}`);
+        const optionsDisplay = optionsText.length > 0 ? ` (${optionsText.join(', ')})` : '';
+
         button.disabled = true;
         const oldText = button.innerHTML;
         button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
@@ -34,7 +44,7 @@
                     "X-Requested-With": "XMLHttpRequest",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
-                body: new URLSearchParams({ quantity }),
+                body: new URLSearchParams({ quantity, options: JSON.stringify(options) }),
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || "Unable to add to cart.");
@@ -42,7 +52,7 @@
             const localCart = readLocalCart();
             localCart[productId] = (Number(localCart[productId]) || 0) + quantity;
             writeLocalCart(localCart);
-            showToast(data.message);
+            showToast(data.message + optionsDisplay);
         } catch (error) {
             showToast(error.message, true);
         } finally {
@@ -71,6 +81,11 @@
             const qtySource = button.dataset.quantitySource;
             const quantity = Number(qtySource ? document.getElementById(qtySource)?.value || 1 : 1);
             const url = window.SHEEBMART.addToCartUrlTemplate.replace("__ID__", productId);
+            
+            // Retrieve selected options from sessionStorage
+            const optionsData = sessionStorage.getItem(`product_options_${productId}`);
+            const options = optionsData ? JSON.parse(optionsData) : { size: null, color: null };
+            
             button.disabled = true;
             try {
                 const response = await fetch(url, {
@@ -80,7 +95,7 @@
                         "X-Requested-With": "XMLHttpRequest",
                         "Content-Type": "application/x-www-form-urlencoded",
                     },
-                    body: new URLSearchParams({ quantity }),
+                    body: new URLSearchParams({ quantity, options: JSON.stringify(options) }),
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.message || "Unable to continue.");

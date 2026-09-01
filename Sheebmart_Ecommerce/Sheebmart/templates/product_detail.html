@@ -36,9 +36,9 @@
             {% if size_list %}
             <div class="option-block">
                 <label>Size</label>
-                <div class="d-flex gap-2 flex-wrap">
+                <div class="d-flex gap-2 flex-wrap" data-option-type="size">
                     {% for size in size_list %}
-                    <button class="option-chip" type="button">{{ size }}</button>
+                    <button class="option-chip" type="button" data-option-value="{{ size }}">{{ size }}</button>
                     {% endfor %}
                 </div>
             </div>
@@ -47,9 +47,9 @@
             {% if color_list %}
             <div class="option-block">
                 <label>Color</label>
-                <div class="d-flex gap-2 flex-wrap">
+                <div class="d-flex gap-2 flex-wrap" data-option-type="color">
                     {% for color in color_list %}
-                    <button class="option-chip" type="button">{{ color }}</button>
+                    <button class="option-chip" type="button" data-option-value="{{ color }}">{{ color }}</button>
                     {% endfor %}
                 </div>
             </div>
@@ -130,17 +130,75 @@
 {% endblock %}
 {% block extra_js %}
 <script>
+// Store selected options
+const selectedOptions = {
+    size: null,
+    color: null
+};
+
 function changeQty(delta) {
     const input = document.getElementById('detailQty');
     let value = parseInt(input.value || '1') + delta;
     value = Math.max(1, Math.min(parseInt(input.max || '99'), value));
     input.value = value;
 }
+
 document.querySelectorAll('.product-thumb').forEach(btn => {
     btn.addEventListener('click', () => {
         document.getElementById('mainProductImage').src = btn.dataset.image;
         document.querySelectorAll('.product-thumb').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+    });
+});
+
+// Handle size and color chip selection
+document.querySelectorAll('[data-option-type]').forEach(container => {
+    const optionType = container.dataset.optionType; // 'size' or 'color'
+    
+    container.querySelectorAll('.option-chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Remove active class from all chips in this container
+            container.querySelectorAll('.option-chip').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked chip
+            chip.classList.add('active');
+            
+            // Store the selected value
+            selectedOptions[optionType] = chip.dataset.optionValue;
+            
+            console.log(`Selected ${optionType}: ${selectedOptions[optionType]}`);
+        });
+    });
+});
+
+// Intercept Add to Cart button to include size/color
+document.querySelectorAll('.add-cart-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+        if (this.dataset.quantitySource === 'detailQty') {
+            // Store selected options in session/local storage for this product
+            const productId = this.dataset.productId;
+            const options = {
+                size: selectedOptions.size,
+                color: selectedOptions.color
+            };
+            sessionStorage.setItem(`product_options_${productId}`, JSON.stringify(options));
+            console.log(`Stored options for product ${productId}:`, options);
+        }
+    });
+});
+
+// Intercept Buy Now button to include size/color
+document.querySelectorAll('.buy-now-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+        const productId = this.dataset.productId;
+        const options = {
+            size: selectedOptions.size,
+            color: selectedOptions.color
+        };
+        sessionStorage.setItem(`product_options_${productId}`, JSON.stringify(options));
+        console.log(`Stored options for product ${productId} (Buy Now):`, options);
     });
 });
 </script>

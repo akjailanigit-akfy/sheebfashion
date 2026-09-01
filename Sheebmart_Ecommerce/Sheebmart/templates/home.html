@@ -20,8 +20,25 @@
             </div>
             <div class="col-lg-6">
                 <div class="hero-art"> 
-                    <div class="hero-card card-a">  <span>NEW</span></div>
-                    <div class="hero-card card-b"><span>UP TO 40%</span><strong>Weekend<br>Sale</strong></div>
+                    <!-- Men's Fashion Card -->
+                    <div class="hero-card card-a">
+                        <div class="promo-content">
+                            <span class="promo-label">EXCLUSIVE COLLECTION</span>
+                            <div class="promo-offer">Up to 50% OFF</div>
+                            <h3 class="promo-title">Men's Fashion</h3>
+                            <p class="promo-desc">Premium essentials & latest trends</p>
+                        </div>
+                        <a href="{% url 'products:collection' %}?category=men" class="promo-btn">Shop Now →</a>
+                    </div>
+                    <!-- Women's Sale Card -->
+                    <div class="hero-card card-b">
+                        <div class="promo-content">
+                            <span class="promo-label">LIMITED TIME</span>
+                            <div class="promo-offer">Flat 40% OFF</div>
+                            <h3 class="promo-title">Women's Weekend<br>Sale</h3>
+                        </div>
+                        <a href="{% url 'products:collection' %}?category=women" class="promo-btn">Discover →</a>
+                    </div>
                     <div class="hero-circle"></div>
                     <div class="hero-floating"><i class="fa-solid fa-sparkles"></i> Fresh picks</div>
                 </div>
