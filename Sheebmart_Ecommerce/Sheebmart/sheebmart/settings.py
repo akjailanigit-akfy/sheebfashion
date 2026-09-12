@@ -9,9 +9,13 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-sheebmart-dev-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = [
-    host.strip() for host in os.getenv(
-        "ALLOWED_HOSTS", "127.0.0.1,localhost"
-    ).split(",") if host.strip()
+    "127.0.0.1",
+    "localhost",
+    "sheebfashion-production.up.railway.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://sheebfashion-production.up.railway.app",
 ]
 
 INSTALLED_APPS = [
