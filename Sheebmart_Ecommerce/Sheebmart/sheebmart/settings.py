@@ -16,3 +16,6 @@ ALLOWED_HOSTS = os.getenv(
 CSRF_TRUSTED_ORIGINS = [
     "https://sheebfashion-production.up.railway.app",
 ]
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
